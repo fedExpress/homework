@@ -22,13 +22,11 @@ def running_task(self, *args):
     message = ""
     total = args[0]
     for i in range(total):
-        print(total)
-        if not message:
-            message = '{0} {1}...'.format("Something", i)
+        message = '{0} {1}...'.format("Something", i)
         self.update_state(state='PROGRESS',
                           meta={'current': i, 'total': total,
-                                'status': message})
-        time.sleep(1)
+                                'status': "", "message": message})
+        time.sleep(2)
 
     return {'current': 100, 'total': 100, 'status': 'Task completed!',
             'result': 42}
@@ -44,7 +42,7 @@ def index():
 
 @app.route('/job', methods=['POST'])
 def run_job():
-    my_number = request.json['data']
+    my_number = int(request.json['data'])
     if my_number > 0:
 
         task = running_task.apply_async(args=[my_number])

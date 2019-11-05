@@ -29,8 +29,6 @@
             // add task status elements
             div = $('<div class="progress"><div></div><div>0%</div><div>...</div><div>&nbsp;</div></div><hr>');
             $('#progress').append(div);
-            message_div = $("#message");
-
 
             // create a progress bar
             var nanobar = new Nanobar({
@@ -38,11 +36,14 @@
                 target: div[0].childNodes[0]
             });
             var mynumber = document.getElementById("number_of_rows").value;
+	    console.log(mynumber);
             // send ajax POST request to start background job
             $.ajax({
                 type: 'POST',
                 url: '/job',
-                data : {'data': mynumber}
+                data : JSON.stringify ({'data': mynumber}),
+		contentType: "application/json",
+        	dataType: 'json',
                 success: function(data, status, request) {
                     status_url = request.getResponseHeader('Location');
                     update_progress(status_url, nanobar, div[0]);
@@ -52,14 +53,14 @@
                 }
             });
         }
-        function update_progress(status_url, nanobar, status_div, message_div) {
+        function update_progress(status_url, nanobar, status_div) {
             // send GET request to status URL
             $.getJSON(status_url, function(data) {
                 // update UI
                 percent = parseInt(data['current'] * 100 / data['total']);
                 nanobar.go(percent);
                 $(status_div.childNodes[1]).text(percent + '%');
-                message_div.append("<p>"+data['message']+"</p>");
+                $("#message").append("<p>"+data['message']+"</p>");
                 $(status_div.childNodes[2]).text(data['status']);
                 if (data['state'] != 'PENDING' && data['state'] != 'PROGRESS') {
                     if ('result' in data) {
