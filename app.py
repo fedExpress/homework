@@ -21,7 +21,7 @@ celery.conf.update(app.config)
 def running_task(self, *args):
     message = ""
     total = args[0]
-    for i in range(total):
+    for i in range(1, total+1):
         message = '{0} {1}...'.format("Something", i)
         self.update_state(state='PROGRESS',
                           meta={'current': i, 'total': total,
